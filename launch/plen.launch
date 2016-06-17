@@ -1,0 +1,7 @@
+<launch>
+	<node pkg="plen" name="ControlNode" type="controlNode.py"/>
+	<node pkg="plen" name="gpioNode" type="gpioNode.py"/>
+	<node pkg="plen" name="serialNode" type="serialNode.py"/>
+	<node pkg="plen" name="i2cNode" type="i2cNode.py"/>
+	<node pkg="plen" name="bleNode" type="bleNode.py"/>
+</launch>
