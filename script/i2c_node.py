@@ -49,9 +49,9 @@ class Mpu(object):
 
 
 class Node(object):
-    NAME = 'i2cNode'
-    PUBLISHER_NAME = 'I2cToControl'
-    SUBSCRIBER_NAME = 'ControlToI2c'
+    NAME = 'i2c_node'
+    PUBLISHER_NAME = 'to_serial'
+    SUBSCRIBER_NAME = 'to_i2c'
     ROSPY_RATE_HZ = 10
 
     def __init__(self):
@@ -78,7 +78,7 @@ class Node(object):
         accelgyro = self.mpu.read_accelgyros()
 
         response = String()
-        response.data = 'data,w,' + ','.join(map(str, accelgyro))
+        response.data = 'r,' + ','.join(map(str, accelgyro))
         self.publisher.publish(response)
 
     def start(self):

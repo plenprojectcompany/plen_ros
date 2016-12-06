@@ -42,11 +42,9 @@ class Node(object):
     def __init__(self):
         self.eyes = (left_eye(), right_eye())
 
-        rospy.init_node('gpioNode', anonymous=True)
-        self.publisher = rospy.Publisher(
-            'GpioToControl', String, queue_size=10)
+        rospy.init_node('gpio_node', anonymous=True)
         self.subscriber = rospy.Subscriber(
-            'ControlToGpio', String, self.subscribe)
+            'to_gpio', String, self.subscribe)
         self.rospy_rate = rospy.Rate(self.ROSPY_RATE_HZ)
 
     def subscribe(self, message):

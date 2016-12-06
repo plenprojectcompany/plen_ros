@@ -29,14 +29,10 @@ class Node(object):
     def __init__(self):
         self.serial = PlenSerial()
 
-        rospy.init_node('serialNode', anonymous=True)
-        self.publisher = rospy.Publisher(
-            'SerialToControl', String, queue_size=10)
+        rospy.init_node('serial_node', anonymous=True)
         self.subscribers = (
-            rospy.Subscriber('ControlToSerial', String,
+            rospy.Subscriber('to_serial', String,
                              self.subscribe_request),
-            rospy.Subscriber('I2cToControl', String,
-                             self.subscribe_accelgyros),
         )
         self.sleep_rate = rospy.Rate(self.SLEEP_RATE_HZ)
 
@@ -44,12 +40,11 @@ class Node(object):
         request, text = message.data.split(',')
         if request == 'w':
             self.serial.write_with_re_de(text)
+        elif request == 'r':
+            data = message.data.split(',')
+            self.accelgyros = map(int, data[2:])
         else:
             rospy.logwarn('unknown request "%s" ignored.', request)
-
-    def subscribe_accelgyros(self, message):
-        data = message.data.split(',')
-        self.accelgyros = map(int, data[2:])
 
     def write_accelgyros(self):
         # ready?

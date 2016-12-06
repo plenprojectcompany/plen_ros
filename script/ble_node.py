@@ -24,8 +24,11 @@ import rospy
 from std_msgs.msg import String
 
 # register BLE node to ROS
-rospy.init_node('bleNode', anonymous=True)
-pub = rospy.Publisher('BleToControl', String, queue_size=10)
+rospy.init_node('ble_node', anonymous=True)
+
+# register publisher wanted to publish message of BLE
+to_gpio = rospy.Publisher('to_gpio', String, queue_size=10)
+to_serial = rospy.Publisher('to_serial', String, queue_size=10)
 
 mainloop = None
 
@@ -378,7 +381,11 @@ def find_adapter(bus):
 
 
 def send(message):
-    pub.publish(message)
+    message.split(",")
+    if message[0] == "gpio":
+        to_gpio.publish(",".join(message[1:3]))
+    else:
+        to_serial.publish(",".join(message[1:3]))
 
 
 def prepare_ble_cmd():
