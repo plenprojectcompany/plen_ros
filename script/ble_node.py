@@ -251,8 +251,6 @@ class TestService(Service):
             bus, 1, self, self.CH_UUID2, 0, 1, ['read']))
         self.add_characteristic(TestCharacteristic(bus, 2, self, self.CH_UUID, 0, 1, [
                                 'read', 'write', 'writable-auxiliaries']))
-        self.add_characteristic(TestCharacteristic(
-            bus, 3, self, self.CH_UUIDd, 0, 1, ['read', 'write']))
 
 
 class TestCharacteristic(Characteristic):
