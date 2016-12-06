@@ -58,7 +58,8 @@ class Node(object):
         self.mpu = Mpu()
 
         rospy.init_node(Node.NAME, anonymous=True)
-        self.publisher = rospy.Publisher(Node.PUBLISHER_NAME, String, queue_size=10)
+        self.publisher = rospy.Publisher(
+            Node.PUBLISHER_NAME, String, queue_size=10)
         rospy.Subscriber(Node.SUBSCRIBER_NAME, String, self.subscribe)
         self.rospy_rate = rospy.Rate(Node.ROSPY_RATE_HZ)
 

@@ -5,6 +5,7 @@ from std_msgs.msg import String
 
 
 class PlenEye(object):
+
     def __init__(self, pin, pwm_period_us=700):
         self._pwm = mraa.Pwm(pin)
         self._pwm.period_us(pwm_period_us)
@@ -42,8 +43,10 @@ class Node(object):
         self.eyes = (left_eye(), right_eye())
 
         rospy.init_node('gpioNode', anonymous=True)
-        self.publisher = rospy.Publisher('GpioToControl', String, queue_size=10)
-        self.subscriber = rospy.Subscriber('ControlToGpio', String, self.subscribe)
+        self.publisher = rospy.Publisher(
+            'GpioToControl', String, queue_size=10)
+        self.subscriber = rospy.Subscriber(
+            'ControlToGpio', String, self.subscribe)
         self.rospy_rate = rospy.Rate(self.ROSPY_RATE_HZ)
 
     def subscribe(self, message):

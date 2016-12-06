@@ -4,9 +4,9 @@ import subprocess
 import time
 
 # restart bluetoothd
-killall = subprocess.Popen(['killall', 'bluetoothd'], stdout = subprocess.PIPE, )
+killall = subprocess.Popen(['killall', 'bluetoothd'], stdout=subprocess.PIPE, )
 time.sleep(1.0)
-bluetoothd = subprocess.Popen(['bluetoothd', '-nE'], stdout = subprocess.PIPE, )
+bluetoothd = subprocess.Popen(['bluetoothd', '-nE'], stdout=subprocess.PIPE, )
 end_of_pipe = bluetoothd.stdout
 time.sleep(1.0)
 
@@ -25,30 +25,35 @@ from std_msgs.msg import String
 
 # register BLE node to ROS
 rospy.init_node('bleNode', anonymous=True)
-pub = rospy.Publisher('BleToControl', String, queue_size = 10)
+pub = rospy.Publisher('BleToControl', String, queue_size=10)
 
 mainloop = None
 
 BLUEZ_SERVICE_NAME = 'org.bluez'
 GATT_MANAGER_IFACE = 'org.bluez.GattManager1'
-DBUS_OM_IFACE =      'org.freedesktop.DBus.ObjectManager'
-DBUS_PROP_IFACE =    'org.freedesktop.DBus.Properties'
+DBUS_OM_IFACE = 'org.freedesktop.DBus.ObjectManager'
+DBUS_PROP_IFACE = 'org.freedesktop.DBus.Properties'
 
 GATT_SERVICE_IFACE = 'org.bluez.GattService1'
-GATT_CHRC_IFACE =    'org.bluez.GattCharacteristic1'
-GATT_DESC_IFACE =    'org.bluez.GattDescriptor1'
+GATT_CHRC_IFACE = 'org.bluez.GattCharacteristic1'
+GATT_DESC_IFACE = 'org.bluez.GattDescriptor1'
+
 
 class InvalidArgsException(dbus.exceptions.DBusException):
     _dbus_error_name = 'org.freedesktop.DBus.Error.InvalidArgs'
 
+
 class NotSupportedException(dbus.exceptions.DBusException):
     _dbus_error_name = 'org.bluez.Error.NotSupported'
+
 
 class NotPermittedException(dbus.exceptions.DBusException):
     _dbus_error_name = 'org.bluez.Error.NotPermitted'
 
+
 class InvalidValueLengthException(dbus.exceptions.DBusException):
     _dbus_error_name = 'org.bluez.Error.InvalidValueLength'
+
 
 class FailedException(dbus.exceptions.DBusException):
     _dbus_error_name = 'org.bluez.Error.Failed'
@@ -117,6 +122,7 @@ class Service(dbus.service.Object):
 
 
 class Characteristic(dbus.service.Object):
+
     def __init__(self, bus, index, uuid, flags, service):
         self.path = service.path + '/char' + str(index)
         self.bus = bus
@@ -189,6 +195,7 @@ class Characteristic(dbus.service.Object):
 
 
 class Descriptor(dbus.service.Object):
+
     def __init__(self, bus, index, uuid, flags, characteristic):
         self.path = characteristic.path + '/desc' + str(index)
         self.bus = bus
@@ -228,21 +235,26 @@ class Descriptor(dbus.service.Object):
         print('Default WriteValue called, returning error')
         raise NotSupportedException()
 
+
 class TestService(Service):
 
     TEST_SVC_UUID = 'E1F40469-CFE1-43C1-838D-DDBC9DAFDDE6'
-    CH_UUID =  'F90E9CFE-7E05-44A5-9D75-F13644D6F645'
+    CH_UUID = 'F90E9CFE-7E05-44A5-9D75-F13644D6F645'
     CH_UUID2 = 'CF70EE7F-2A26-4F62-931F-9087AB12552C'
 
     def __init__(self, bus, index):
         Service.__init__(self, bus, index, self.TEST_SVC_UUID, True)
-        self.add_characteristic(TestCharacteristic(bus, 1, self, self.CH_UUID2,0,1,['read']))
-        self.add_characteristic(TestCharacteristic(bus, 2, self, self.CH_UUID,0,1,['read', 'write','writable-auxiliaries']))
-        self.add_characteristic(TestCharacteristic(bus, 3, self, self.CH_UUIDd,0,1,['read', 'write']))
+        self.add_characteristic(TestCharacteristic(
+            bus, 1, self, self.CH_UUID2, 0, 1, ['read']))
+        self.add_characteristic(TestCharacteristic(bus, 2, self, self.CH_UUID, 0, 1, [
+                                'read', 'write', 'writable-auxiliaries']))
+        self.add_characteristic(TestCharacteristic(
+            bus, 3, self, self.CH_UUIDd, 0, 1, ['read', 'write']))
+
 
 class TestCharacteristic(Characteristic):
 
-    def __init__(self, bus, index, service,TEST_CHRC_UUID,flag,flag2,p):
+    def __init__(self, bus, index, service, TEST_CHRC_UUID, flag, flag2, p):
         Characteristic.__init__(
             self, bus, index,
             TEST_CHRC_UUID,
@@ -252,7 +264,8 @@ class TestCharacteristic(Characteristic):
         if flag == 1:
             self.add_descriptor(TestDescriptor(bus, 0, self))
         if flag2 == 1:
-            self.add_descriptor(CharacteristicUserDescriptionDescriptor(bus, 1, self))
+            self.add_descriptor(
+                CharacteristicUserDescriptionDescriptor(bus, 1, self))
 
     def ReadValue(self):
         print('TestCharacteristic Read: ' + repr(self.value))
@@ -276,6 +289,7 @@ class TestCharacteristic(Characteristic):
 
     def StartNotify(self):
         print('callback:StartNotify')
+
 
 class TestDescriptor(Descriptor):
 
@@ -313,6 +327,7 @@ class CharacteristicUserDescriptionDescriptor(Descriptor):
             raise NotPermittedException()
         self.value = value
 
+
 def property_changed(interface, changed, invalidated, path):
     iface = interface[interface.rfind(".") + 1:]
     for name, value in changed.iteritems():
@@ -340,6 +355,7 @@ def property_changed(interface, changed, invalidated, path):
         else:
             pass
 
+
 def register_service_cb():
     print('GATT service registered')
 
@@ -360,27 +376,35 @@ def find_adapter(bus):
 
     return None
 
+
 def send(message):
     pub.publish(message)
+
 
 def prepare_ble_cmd():
     pass
 
+
 def advertise():
     print('hciup')
-    hci_on = subprocess.Popen(['hciconfig','hci0','up'], stdout=subprocess.PIPE,)
+    hci_on = subprocess.Popen(
+        ['hciconfig', 'hci0', 'up'], stdout=subprocess.PIPE,)
 
     end_of_pipe = hci_on.stdout
     time.sleep(0.1)
     print('hcitool')
-    hcitool_cmd2 = subprocess.Popen(['hcitool', '-i', 'hci0', 'cmd', '0x08', '0x0006', '20', '00', '20', '00','00', '00', '00', '00', '00', '00', '00', '00', '00', '07','00'], stdout=subprocess.PIPE,)
+    hcitool_cmd2 = subprocess.Popen(['hcitool', '-i', 'hci0', 'cmd', '0x08', '0x0006', '20', '00', '20',
+                                     '00', '00', '00', '00', '00', '00', '00', '00', '00', '00', '07', '00'], stdout=subprocess.PIPE,)
 
     end_of_pipe = hcitool_cmd2.stdout
-    hcitool_cmd = subprocess.Popen(['hcitool','-i','hci0','cmd','0x08','0x0008','15','02','01','06','11','07','e6','dd','af','9d','bc','dd','8d','83','c1','43','e1','cf','69','04','f4','e1'], stdout=subprocess.PIPE,)
+    hcitool_cmd = subprocess.Popen(['hcitool', '-i', 'hci0', 'cmd', '0x08', '0x0008', '15', '02', '01', '06', '11', '07', 'e6',
+                                    'dd', 'af', '9d', 'bc', 'dd', '8d', '83', 'c1', '43', 'e1', 'cf', '69', '04', 'f4', 'e1'], stdout=subprocess.PIPE,)
 
     end_of_pipe = hcitool_cmd.stdout
-    hcitool_cmd3 = subprocess.Popen(['hcitool', '-i', 'hci0', 'cmd', '0x08', '0x000a' ,'01'],stdout=subprocess.PIPE,)
+    hcitool_cmd3 = subprocess.Popen(
+        ['hcitool', '-i', 'hci0', 'cmd', '0x08', '0x000a', '01'], stdout=subprocess.PIPE,)
     end_of_pipe = hcitool_cmd3.stdout
+
 
 def main():
     global mainloop
@@ -397,7 +421,7 @@ def main():
         bus.get_object(BLUEZ_SERVICE_NAME, adapter),
         GATT_MANAGER_IFACE)
 
-    test_service = TestService(bus,0)
+    test_service = TestService(bus, 0)
 
     mainloop = gobject.MainLoop(is_running=True)
 
@@ -420,6 +444,7 @@ def main():
     except (KeyboardInterrupt, SystemExit):
         mainloop.quit()
         print "mainloop.quit!"
+
 
 def mybleNode_shutdown():
     global mainloop

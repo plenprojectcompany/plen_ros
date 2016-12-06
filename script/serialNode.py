@@ -8,8 +8,10 @@ from std_msgs.msg import String
 
 
 class PlenSerial(serial.Serial):
+
     def __init__(self, port='/dev/ttyMFD1', baudrate=115200, re_de_pin=36, **kwargs):
-        super(PlenSerial, self).__init__(port=port, baudrate=baudrate, **kwargs)
+        super(PlenSerial, self).__init__(
+            port=port, baudrate=baudrate, **kwargs)
         self.re_de = mraa.Gpio(re_de_pin)
 
     def write_with_re_de(self, text):
@@ -28,10 +30,13 @@ class Node(object):
         self.serial = PlenSerial()
 
         rospy.init_node('serialNode', anonymous=True)
-        self.publisher = rospy.Publisher('SerialToControl', String, queue_size=10)
+        self.publisher = rospy.Publisher(
+            'SerialToControl', String, queue_size=10)
         self.subscribers = (
-            rospy.Subscriber('ControlToSerial', String, self.subscribe_request),
-            rospy.Subscriber('I2cToControl', String, self.subscribe_accelgyros),
+            rospy.Subscriber('ControlToSerial', String,
+                             self.subscribe_request),
+            rospy.Subscriber('I2cToControl', String,
+                             self.subscribe_accelgyros),
         )
         self.sleep_rate = rospy.Rate(self.SLEEP_RATE_HZ)
 
