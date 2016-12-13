@@ -281,12 +281,12 @@ class TestCharacteristic(Characteristic):
 
         if ('#' in s or '$' in s or '<' in s or '>' in s):
             LEDon = String()
-            LEDon.data = "gpio,w,act"
-            send(LEDon)
+            LEDon.data = "w,act"
+            to_gpio.publish(LEDon)
 
         message = String()
-        message.data = "serial,w," + s
-        send(message)
+        message.data = "w," + s
+        to_serial.publish(message)
 
     def StartNotify(self):
         print('callback:StartNotify')
@@ -337,13 +337,13 @@ def property_changed(interface, changed, invalidated, path):
             if val == "1":
                 print("ON")
                 message = String()
-                message.data = "gpio,w,on"
-                send(message)
+                message.data = "w,on"
+                to_gpio.publish(message)
             elif val == "0":
                 print("OFF")
                 message = String()
-                message.data = "gpio,w,off"
-                send(message)
+                message.data = "w,off"
+                to_gpio.publish(message)
                 advertise()
 
             else:
@@ -351,8 +351,8 @@ def property_changed(interface, changed, invalidated, path):
         elif name == 'Alias' or name == 'Name':
             print("ON")
             message = String()
-            message.data = "gpio,w,on"
-            send(message)
+            message.data = "w,on"
+            to_gpio.publish(message)
         else:
             pass
 
@@ -376,14 +376,6 @@ def find_adapter(bus):
             return o
 
     return None
-
-
-def send(message):
-    message.split(",")
-    if message[0] == "gpio":
-        to_gpio.publish(",".join(message[1:3]))
-    else:
-        to_serial.publish(",".join(message[1:3]))
 
 
 def prepare_ble_cmd():
