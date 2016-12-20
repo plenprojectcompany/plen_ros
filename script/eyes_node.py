@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import mraa
-from std_msgs.msg import String
+from plen_msgs.msg import Eyes
 
 
 class PlenEye(object):
@@ -11,21 +11,23 @@ class PlenEye(object):
         self._pwm.period_us(pwm_period_us)
         self._pwm.enable(True)
 
-    def on(self):
-        self._pwm_duty = 1.0
-        self._inc_speed = 0.0
 
-    def off(self):
-        self._pwm_duty = 0.0
-        self._inc_speed = 0.0
+    def set_pattern(self, pattern, loop):
+        if self._pattern != pattern:
+            self._pattern_index = 0
+            self._pattern = pattern
+        self._loop = loop
 
-    def act(self):
-        self._pwm_duty = 0.0
-        self._inc_speed = 0.05
 
     def update(self):
-        self._pwm.write(self._pwm_duty)
-        self._pwm_duty = max(0, min(1, self._pwm_duty + self._inc_speed))
+        self._pwm.write(self._pattern[self._pattern_index])
+        self._pattern_index += 1
+        if self._loop:
+            if self._pattern_index == len(self._pattern):
+                self._pattern_index = 0
+        else:
+            if self._pattern_index == len(self._pattern)-1:
+                self._pattern_index = 0
 
 
 def left_eye():
@@ -42,31 +44,15 @@ class Node(object):
     def __init__(self):
         self.eyes = (left_eye(), right_eye())
 
-        rospy.init_node('gpio_node', anonymous=True)
+        rospy.init_node('eyes_node', anonymous=True)
         self.subscriber = rospy.Subscriber(
-            'to_gpio', String, self.subscribe)
+            'instruction_to_eyes', Eyes, self.subscribe)
         self.rospy_rate = rospy.Rate(self.ROSPY_RATE_HZ)
 
     def subscribe(self, message):
-        rospy.loginfo("GPIO:%s", message.data)
-
-        message_data = message.data.split(",")
-        assert len(message_data) == 2
-
-        rw, mode = message_data
-
-        if rw != 'w':
-            return
-
-        for eye in self.eyes:
-            if mode == "on":
-                eye.on()
-            elif mode == "off":
-                eye.off()
-            elif mode == "act":
-                eye.act()
-            else:
-                assert False
+        #rospy.loginfo("EYES:%s", message.data)
+        self.eyes[0].set_pattern(message.left.pattern, message.left.loop)
+        self.eyes[1].set_pattern(message.right.pattern, message.right.loop)
 
     def start(self):
         try:

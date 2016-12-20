@@ -1,25 +1,12 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-# 便利な関数やメソッド
-# - 文字列やバイト列の連結は join()
-# - リストやタプルの各要素に関数を適用するときは map() または 内包表記
-# - 1バイト整数のリストやタプルを bytes に変換するときは bytearray() して bytes()
-# - bytes を数値列に変換するときは struct.unpack()
-# - 連続した整数の用意は range() か xrange()
-
-# 推奨される書式
-# - 関数名は小文字とアンダースコア
-
-# そのほか
-# - 暗黙に仮定している (分かりにくい) 条件があれば assert文 で明示しておく
-
-
 import struct
 
 import mraa
 import rospy
-from std_msgs.msg import String
+from geometory_msgs.msg import Accel
+from std_msgs.msg import Empty
 
 
 class Mpu(object):
@@ -36,12 +23,11 @@ class Mpu(object):
         data_nbytes = 12
         reg_addresses = xrange(start_address, start_address + data_nbytes)
 
-        # map(f, xs) は (f(x) for x in xs) と等価
         i2c_data = map(self._i2c.readReg, reg_addresses)
 
-        # '>' :  ビッグエンディアン (上位バイトから先に送られてくる形式)
+        # '<' :  リトルエンディアン
         # 'h' :  2byte符号付き整数
-        data_format = '>' + 'h' * (data_nbytes / struct.calcsize('h'))
+        data_format = '<' + 'h' * (data_nbytes / struct.calcsize('h'))
         assert struct.calcsize(data_format) == data_nbytes
         accelgyros = struct.unpack(data_format, bytes(bytearray(i2c_data)))
 
@@ -49,9 +35,9 @@ class Mpu(object):
 
 
 class Node(object):
-    NAME = 'i2c_node'
-    PUBLISHER_NAME = 'to_serial'
-    SUBSCRIBER_NAME = 'to_i2c'
+    NAME = '6axis_node'
+    PUBLISHER_NAME = 'accel'
+    SUBSCRIBER_NAME = 'request_accel'
     ROSPY_RATE_HZ = 10
 
     def __init__(self):
@@ -64,27 +50,23 @@ class Node(object):
         self.rospy_rate = rospy.Rate(Node.ROSPY_RATE_HZ)
 
     def subscribe(self, message):
-        rospy.loginfo('controlNode %s', message.data)
+        rospy.loginfo('GET REQUEST')
 
-        message_data = message.data.split(',')
-        assert len(message_data) == 1
-
-        rw, = message_data
-        assert rw == 'r'
-
-        self.publish_accelgyros()
-
-    def publish_accelgyros(self):
         accelgyro = self.mpu.read_accelgyros()
 
-        response = String()
-        response.data = 'r,' + ','.join(map(str, accelgyro))
+        response = Accel()
+        response.linear.x = accelgyro[0]
+        response.linear.y = accelgyro[1]
+        response.linear.z = accelgyro[2]
+        response.angular.x = accelgyro[3]
+        response.angular.y = accelgyro[4]
+        response.angular.z = accelgyro[5]
         self.publisher.publish(response)
 
     def start(self):
         try:
             while not rospy.is_shutdown():
-                self.publish_accelgyros()
+                #self.publish_accelgyros()
                 self.rospy_rate.sleep()
         finally:
             pass

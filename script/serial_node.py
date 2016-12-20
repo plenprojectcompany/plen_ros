@@ -5,7 +5,8 @@ import serial
 import mraa
 import rospy
 from std_msgs.msg import String
-
+from std_msgs.msg import Empty
+from geometory_msgs.msg import Accel
 
 class PlenSerial(serial.Serial):
 
@@ -31,10 +32,23 @@ class Node(object):
 
         rospy.init_node('serial_node', anonymous=True)
         self.subscribers = (
-            rospy.Subscriber('to_serial', String,
-                             self.subscribe_request),
+            rospy.Subscriber('to_rs485', String, self.subscribe_rs485),
+            rospy.Subscriber('accel', Accel, self.subscribe_accel),
+        )
+        self.publishers = (
+            rospy.Publisher('request_accel', Empty, queue_size = 10),
+            rospy.Publisher('from_rs485', String, queue_size = 10),
         )
         self.sleep_rate = rospy.Rate(self.SLEEP_RATE_HZ)
+
+    def subscribe_rs485(self, message):
+        _, data = message.data.split(',')
+        #header = '>DV'+str(device_id, 16)+str(len(data), 16)
+        #self.serial.write_with_re_de(header+data)
+        self.serial.write_with_re_de(data)
+
+    def subscribe_accel(self, message):
+        self.accel = message
 
     def subscribe_request(self, message):
         request, text = message.data.split(',')
@@ -54,10 +68,15 @@ class Node(object):
         if data != '>':
             rospy.logwarn('invalid input')
 
+        accelgyros = str(self.accel.linear.x) + str(self.accel.linear.y) + str(self.accel.linear.z)
+        accelgyros += str(self.accel.angular.x) + str(self.accel.angular.y) + str(self.accel.angular.z)
+
         # write
-        fmt = '>{}h'.format(len(self.accelgyros))
-        text = struct.pack(fmt, *self.accelgyros)
-        self.serial.write_with_re_de(text)
+        fmt = '<{}h'.format(len(accelgyros))
+        data = struct.pack(fmt, *accelgyros)
+        #header = '>DV'+str(device_id, 16)+str(len(data), 16)
+        #self.serial.write_with_re_de(header+data)
+        self.serial.write_with_re_de(data)
 
     def start(self):
         try:

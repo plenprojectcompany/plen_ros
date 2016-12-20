@@ -22,13 +22,14 @@ import gobject
 
 import rospy
 from std_msgs.msg import String
+from plen_msgs.msg import Eyes
 
 # register BLE node to ROS
 rospy.init_node('ble_node', anonymous=True)
 
 # register publisher wanted to publish message of BLE
-to_gpio = rospy.Publisher('to_gpio', String, queue_size=10)
-to_serial = rospy.Publisher('to_serial', String, queue_size=10)
+op_eyes = rospy.Publisher('instruction_to_eyes', Eyes, queue_size=10)
+rs485 = rospy.Publisher('to_rs485', String, queue_size=10)
 
 mainloop = None
 
@@ -277,16 +278,19 @@ class TestCharacteristic(Characteristic):
         self.value = value
         s = "".join(chr(b) for b in value)
         print s
-        rospy.loginfo("controlNode %s", s)
+        rospy.loginfo("PUBLISH: %s", s)
 
         if ('#' in s or '$' in s or '<' in s or '>' in s):
-            LEDon = String()
-            LEDon.data = "w,act"
-            to_gpio.publish(LEDon)
+            eyes = Eyes()
+            eyes.left.loop = False
+            eyes.right.loop = False
+            eyes.left.signal = [0,0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1]
+            eyes.right.signal = [0,0.05,0.10,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.80,0.85,0.90,0.95,1]
+            op_eyes.publish(eyes)
 
         message = String()
-        message.data = "w," + s
-        to_serial.publish(message)
+        message.data = s
+        to_rs485.publish(message)
 
     def StartNotify(self):
         print('callback:StartNotify')
@@ -336,23 +340,32 @@ def property_changed(interface, changed, invalidated, path):
         if name == 'Connected':
             if val == "1":
                 print("ON")
-                message = String()
-                message.data = "w,on"
-                to_gpio.publish(message)
+                eyes = Eyes()
+                eyes.left.loop = False
+                eyes.right.loop = False
+                eyes.left.signal = [1]
+                eyes.right.signal = [1]
+                op_eyes.publish(eyes)
             elif val == "0":
                 print("OFF")
-                message = String()
-                message.data = "w,off"
-                to_gpio.publish(message)
+                eyes = Eyes()
+                eyes.left.loop = False
+                eyes.right.loop = False
+                eyes.left.signal = [0]
+                eyes.right.signal = [0]
+                op_eyes.publish(eyes)
                 advertise()
 
             else:
                 pass
         elif name == 'Alias' or name == 'Name':
             print("ON")
-            message = String()
-            message.data = "w,on"
-            to_gpio.publish(message)
+            eyes = Eyes()
+            eyes.left.loop = False
+            eyes.right.loop = False
+            eyes.left.signal = [1]
+            eyes.right.signal = [1]
+            op_eyes.publish(eyes)
         else:
             pass
 
