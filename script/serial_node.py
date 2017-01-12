@@ -50,17 +50,11 @@ class Node(object):
     def subscribe_accel(self, message):
         self.accel = message
 
-    def subscribe_request(self, message):
-        request, text = message.data.split(',')
-        if request == 'w':
-            self.serial.write_with_re_de(text)
-        elif request == 'r':
-            data = message.data.split(',')
-            self.accelgyros = map(int, data[2:])
-        else:
-            rospy.logwarn('unknown request "%s" ignored.', request)
+    def request_accel(self, message):
+        request = Empty()
+        self.publishers[0].publish(request)
 
-    def write_accelgyros(self):
+    def write_accel(self):
         # ready?
         if self.serial.inWaiting() <= 0:
             return
@@ -81,7 +75,7 @@ class Node(object):
     def start(self):
         try:
             while not rospy.is_shutdown():
-                self.write_accelgyros()
+                self.write_accel()
                 self.sleep_rate.sleep()
         finally:
             self.serial.close()
