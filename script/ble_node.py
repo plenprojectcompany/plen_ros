@@ -3,13 +3,6 @@
 import subprocess
 import time
 
-# restart bluetoothd
-killall = subprocess.Popen(['killall', 'bluetoothd'], stdout=subprocess.PIPE, )
-time.sleep(1.0)
-bluetoothd = subprocess.Popen(['bluetoothd', '-nE'], stdout=subprocess.PIPE, )
-end_of_pipe = bluetoothd.stdout
-time.sleep(1.0)
-
 import dbus
 import dbus.exceptions
 import dbus.mainloop.glib
@@ -17,8 +10,6 @@ import dbus.service
 
 import array
 import gobject
-
-#from random import randint
 
 import rospy
 from std_msgs.msg import String
@@ -417,6 +408,13 @@ def advertise():
 
 
 def main():
+    # restart bluetoothd
+    killall = subprocess.Popen(['killall', 'bluetoothd'], stdout=subprocess.PIPE, )
+    time.sleep(1.0)
+    bluetoothd = subprocess.Popen(['bluetoothd', '-nE'], stdout=subprocess.PIPE, )
+    end_of_pipe = bluetoothd.stdout
+    time.sleep(1.0)
+
     global mainloop
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
