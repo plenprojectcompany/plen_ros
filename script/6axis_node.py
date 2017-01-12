@@ -25,8 +25,8 @@ class Mpu(object):
 
         i2c_data = map(self._i2c.readReg, reg_addresses)
 
-        # '<' :  リトルエンディアン
-        # 'h' :  2byte符号付き整数
+        # '<' :  little endian
+        # 'h' :  2byte signed integer
         data_format = '<' + 'h' * (data_nbytes / struct.calcsize('h'))
         assert struct.calcsize(data_format) == data_nbytes
         accelgyros = struct.unpack(data_format, bytes(bytearray(i2c_data)))
