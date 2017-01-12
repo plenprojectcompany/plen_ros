@@ -26,8 +26,8 @@ class PlenEye(object):
             if self._pattern_index == len(self._pattern):
                 self._pattern_index = 0
         else:
-            if self._pattern_index == len(self._pattern)-1:
-                self._pattern_index = 0
+            if self._pattern_index == len(self._pattern):
+                self._pattern_index = len(self._pattern)-1
 
 
 def left_eye():
