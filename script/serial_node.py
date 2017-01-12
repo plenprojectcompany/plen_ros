@@ -51,6 +51,7 @@ class Node(object):
         self.accel = message
 
     def request_accel(self, message):
+        rospy.loginfo('REQUEST ACCEL')
         request = Empty()
         self.publishers[0].publish(request)
 
