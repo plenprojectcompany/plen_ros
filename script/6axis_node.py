@@ -48,10 +48,16 @@ class Node(object):
             Node.PUBLISHER_NAME, String, queue_size=10)
         rospy.Subscriber(Node.SUBSCRIBER_NAME, String, self.subscribe)
         self.rospy_rate = rospy.Rate(Node.ROSPY_RATE_HZ)
+        self.auto_publish = True
 
     def subscribe(self, message):
         rospy.loginfo('GET REQUEST')
+        self.auto_publish = False
 
+        self.publish()
+
+    def publish(self):
+        rospy.loginfo('PUBLISH ACCEL')
         accelgyro = self.mpu.read_accelgyros()
 
         response = Accel()
@@ -66,7 +72,8 @@ class Node(object):
     def start(self):
         try:
             while not rospy.is_shutdown():
-                #self.publish_accelgyros()
+                if self.auto_publish:
+                    self.publish_accelgyros()
                 self.rospy_rate.sleep()
         finally:
             pass
