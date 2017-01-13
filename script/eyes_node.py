@@ -11,13 +11,11 @@ class PlenEye(object):
         self._pwm.period_us(pwm_period_us)
         self._pwm.enable(True)
 
-
     def set_pattern(self, pattern, loop):
         if self._pattern != pattern:
             self._pattern_index = 0
             self._pattern = pattern
         self._loop = loop
-
 
     def update(self):
         self._pwm.write(self._pattern[self._pattern_index])
@@ -27,7 +25,7 @@ class PlenEye(object):
                 self._pattern_index = 0
         else:
             if self._pattern_index == len(self._pattern):
-                self._pattern_index = len(self._pattern)-1
+                self._pattern_index = len(self._pattern) - 1
 
 
 def left_eye():
@@ -50,7 +48,6 @@ class Node(object):
         self.rospy_rate = rospy.Rate(self.ROSPY_RATE_HZ)
 
     def subscribe(self, message):
-        #rospy.loginfo("EYES:%s", message.data)
         self.eyes[0].set_pattern(message.left.pattern, message.left.loop)
         self.eyes[1].set_pattern(message.right.pattern, message.right.loop)
 
