@@ -61,11 +61,13 @@ class Node(object):
         if data != '>':
             rospy.logwarn('invalid input')
 
-        accelgyros = '{0:02d}'.format(accel.linear.x) + \
-            '{0:02d}'.format(accel.linear.y) + '{0:02d}'.format(accel.linear.z)
-        accelgyros += '{0:02d}'.format(accel.angular.x) + \
-            '{0:02d}'.format(accel.angular.x) + \
-            '{0:02d}'.format(accel.angular.x)
+        accelgyros = []
+        accelgyros.append(int(accel.linear.x))
+        accelgyros.append(int(accel.linear.y))
+        accelgyros.append(int(accel.linear.z))
+        accelgyros.append(int(accel.angular.x))
+        accelgyros.append(int(accel.angular.y))
+        accelgyros.append(int(accel.angular.z))
 
         # write
         fmt = '<{}h'.format(len(accelgyros))
