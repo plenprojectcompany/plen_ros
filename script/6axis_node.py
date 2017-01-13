@@ -45,8 +45,8 @@ class Node(object):
 
         rospy.init_node(Node.NAME, anonymous=True)
         self.publisher = rospy.Publisher(
-            Node.PUBLISHER_NAME, String, queue_size=10)
-        rospy.Subscriber(Node.SUBSCRIBER_NAME, String, self.subscribe)
+            Node.PUBLISHER_NAME, Accel, queue_size=10)
+        rospy.Subscriber(Node.SUBSCRIBER_NAME, Empty, self.subscribe)
         self.rospy_rate = rospy.Rate(Node.ROSPY_RATE_HZ)
         self.auto_publish = True
 

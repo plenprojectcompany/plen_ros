@@ -43,10 +43,7 @@ class Node(object):
         self.sleep_rate = rospy.Rate(self.SLEEP_RATE_HZ)
 
     def subscribe_rs485(self, message):
-        _, data = message.data.split(',')
-        # header = '>DV'+str(device_id, 16)+str(len(data), 16)
-        # self.serial.write_with_re_de(header+data)
-        self.serial.write_with_re_de(data)
+        self.serial.write_with_re_de(message.data)
 
     def subscribe_accel(self, message):
         self.accel = message
@@ -64,15 +61,16 @@ class Node(object):
         if data != '>':
             rospy.logwarn('invalid input')
 
-        accelgyros = str(self.accel.linear.x) + \
-            str(self.accel.linear.y) + str(self.accel.linear.z)
-        accelgyros += str(self.accel.angular.x) + \
-            str(self.accel.angular.y) + str(self.accel.angular.z)
+        accelgyros = '{0:02d}'.format(accel.linear.x) + \
+            '{0:02d}'.format(accel.linear.y) + '{0:02d}'.format(accel.linear.z)
+        accelgyros += '{0:02d}'.format(accel.angular.x) + \
+            '{0:02d}'.format(accel.angular.x) + \
+            '{0:02d}'.format(accel.angular.x)
 
         # write
         fmt = '<{}h'.format(len(accelgyros))
         data = struct.pack(fmt, *accelgyros)
-        # header = '>DV'+str(device_id, 16)+str(len(data), 16)
+        # header = '>DV'+'{0:016d}'.format(device_id)+'{0:016d}'.format(len(data))
         # self.serial.write_with_re_de(header+data)
         self.serial.write_with_re_de(data)
 

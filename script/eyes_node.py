@@ -12,7 +12,8 @@ class PlenEye(object):
         self._pwm.enable(True)
 
     def set_pattern(self, pattern, loop):
-        if self._pattern != pattern:
+        # finished pattern or change loop pattern
+        if self._loop and (map(float, self._pattern) != map(float, pattern)) or (not self._loop) and (self._pattern_index == len(self._pattern) - 1):
             self._pattern_index = 0
             self._pattern = pattern
         self._loop = loop
@@ -59,7 +60,8 @@ class Node(object):
                 self.rospy_rate.sleep()
         finally:
             for eye in self.eyes:
-                eye.off()
+                eye.set_pattern([0], False)
+                eye.update()
 
 
 if __name__ == '__main__':
