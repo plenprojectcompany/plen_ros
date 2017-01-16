@@ -5,7 +5,7 @@ import struct
 
 import mraa
 import rospy
-from geometory_msgs.msg import Accel
+from geometry_msgs.msg import Accel
 from std_msgs.msg import Empty
 
 

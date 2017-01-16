@@ -6,7 +6,7 @@ import mraa
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Empty
-from geometory_msgs.msg import Accel
+from geometry_msgs.msg import Accel
 
 
 class PlenSerial(serial.Serial):
@@ -62,12 +62,12 @@ class Node(object):
             rospy.logwarn('invalid input')
 
         accelgyros = []
-        accelgyros.append(int(accel.linear.x))
-        accelgyros.append(int(accel.linear.y))
-        accelgyros.append(int(accel.linear.z))
-        accelgyros.append(int(accel.angular.x))
-        accelgyros.append(int(accel.angular.y))
-        accelgyros.append(int(accel.angular.z))
+        accelgyros.append(int(self.accel.linear.x))
+        accelgyros.append(int(self.accel.linear.y))
+        accelgyros.append(int(self.accel.linear.z))
+        accelgyros.append(int(self.accel.angular.x))
+        accelgyros.append(int(self.accel.angular.y))
+        accelgyros.append(int(self.accel.angular.z))
 
         # write
         fmt = '<{}h'.format(len(accelgyros))

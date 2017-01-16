@@ -18,7 +18,7 @@ from plen_msgs.msg import Eyes
 rospy.init_node('ble_node', anonymous=True)
 
 # register publisher wanted to publish message of BLE
-eyes = rospy.Publisher('instruction_to_eyes', Eyes, queue_size=10)
+eyes_topic = rospy.Publisher('instruction_to_eyes', Eyes, queue_size=10)
 rs485 = rospy.Publisher('to_rs485', String, queue_size=10)
 
 mainloop = None
@@ -272,11 +272,11 @@ class SerialCharacteristic(Characteristic):
         eyes = Eyes()
         eyes.left.loop = False
         eyes.right.loop = False
-        eyes.left.signal = [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
+        eyes.left.pattern = [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
                             0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05, 0]
-        eyes.right.signal = [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
+        eyes.right.pattern = [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
                              0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1, 0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05, 0]
-        eyes.publish(eyes)
+        eyes_topic.publish(eyes)
 
         message = String()
         message.data = s
@@ -333,17 +333,17 @@ def property_changed(interface, changed, invalidated, path):
                 eyes = Eyes()
                 eyes.left.loop = False
                 eyes.right.loop = False
-                eyes.left.signal = [1]
-                eyes.right.signal = [1]
-                eyes.publish(eyes)
+                eyes.left.pattern = [1]
+                eyes.right.pattern = [1]
+                eyes_topic.publish(eyes)
             elif val == "0":
                 rospy.loginfo("OFF")
                 eyes = Eyes()
                 eyes.left.loop = False
                 eyes.right.loop = False
-                eyes.left.signal = [0]
-                eyes.right.signal = [0]
-                eyes.publish(eyes)
+                eyes.left.pattern = [0]
+                eyes.right.pattern = [0]
+                eyes_topic.publish(eyes)
                 advertise()
 
             else:
@@ -353,9 +353,9 @@ def property_changed(interface, changed, invalidated, path):
             eyes = Eyes()
             eyes.left.loop = False
             eyes.right.loop = False
-            eyes.left.signal = [1]
-            eyes.right.signal = [1]
-            eyes.publish(eyes)
+            eyes.left.pattern = [1]
+            eyes.right.pattern = [1]
+            eyes_topic.publish(eyes)
         else:
             pass
 
@@ -387,22 +387,22 @@ def prepare_ble_cmd():
 
 def advertise():
     rospy.loginfo('hciup')
-    subprocess.call('hciconfig', 'hci0', 'up')
+    subprocess.call(['hciconfig', 'hci0', 'up'])
 
     rospy.loginfo('hcitool')
-    subprocess.call('hcitool', '-i', 'hci0', 'cmd', '0x08', '0x0006', '20', '00', '20',
-                                     '00', '00', '00', '00', '00', '00', '00', '00', '00', '00', '07', '00')
+    subprocess.call(['hcitool', '-i', 'hci0', 'cmd', '0x08', '0x0006', '20', '00', '20',
+                                     '00', '00', '00', '00', '00', '00', '00', '00', '00', '00', '07', '00'])
 
-    subprocess.call('hcitool', '-i', 'hci0', 'cmd', '0x08', '0x0008', '15', '02', '01', '06', '11', '07', 'e6',
-                    'dd', 'af', '9d', 'bc', 'dd', '8d', '83', 'c1', '43', 'e1', 'cf', '69', '04', 'f4', 'e1')
+    subprocess.call(['hcitool', '-i', 'hci0', 'cmd', '0x08', '0x0008', '15', '02', '01', '06', '11', '07', 'e6',
+                    'dd', 'af', '9d', 'bc', 'dd', '8d', '83', 'c1', '43', 'e1', 'cf', '69', '04', 'f4', 'e1'])
 
-    subprocess.call('hcitool', '-i', 'hci0', 'cmd', '0x08', '0x000a', '01')
+    subprocess.call(['hcitool', '-i', 'hci0', 'cmd', '0x08', '0x000a', '01'])
 
 
 def main():
     # restart bluetoothd
-    subprocess.call('killall', 'bluetoothd')
-    subprocess.call('bluetoothd', '-nE')
+    subprocess.call(['killall', 'bluetoothd'])
+    subprocess.call(['bluetoothd', '-nE'])
 
     global mainloop
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
