@@ -73,7 +73,7 @@ class Node(object):
         try:
             while not rospy.is_shutdown():
                 if self.auto_publish:
-                    self.publish_accelgyros()
+                    self.publish()
                 self.rospy_rate.sleep()
         finally:
             pass
