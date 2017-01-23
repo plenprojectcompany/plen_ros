@@ -433,6 +433,8 @@ def main():
                                     reply_handler=register_service_cb,
                                     error_handler=register_service_error_cb)
     advertise()
+    advertise()
+    
     try:
         rospy.loginfo("mainloop.run!")
         mainloop.run()
