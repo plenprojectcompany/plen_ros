@@ -402,7 +402,7 @@ def advertise():
 def main():
     # restart bluetoothd
     subprocess.call(['killall', 'bluetoothd'])
-    subprocess.call(['bluetoothd', '-nE'])
+    subprocess.Popen(['bluetoothd', '-nE'])
 
     global mainloop
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
@@ -434,7 +434,7 @@ def main():
                                     error_handler=register_service_error_cb)
     advertise()
     advertise()
-    
+
     try:
         rospy.loginfo("mainloop.run!")
         mainloop.run()

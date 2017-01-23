@@ -16,10 +16,10 @@ class PlenEye(object):
 
     def set_pattern(self, pattern, loop):
         # finished pattern or change loop pattern
-        self._loop = loop
         if self._loop and (map(float, self._pattern) != map(float, pattern)) or (not self._loop) and (self._pattern_index == len(self._pattern) - 1):
             self._pattern_index = 0
             self._pattern = pattern
+            self._loop = loop
 
 
     def update(self):
