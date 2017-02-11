@@ -8,11 +8,13 @@ import rospy
 from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Empty
 
+
 def get_latest_modified_file_path(dirname):
     target = os.path.join(dirname, '*')
     files = [(f, os.path.getmtime(f)) for f in glob(target)]
     latest_modified_file_path = sorted(files, key=lambda files: files[1])[-1]
     return latest_modified_file_path[0]
+
 
 class Node(object):
     SLEEP_RATE_HZ = 50
@@ -24,13 +26,14 @@ class Node(object):
         rospy.init_node('camera_node', anonymous=True)
 
         # register publisher wanted to publish message of web camera
-        stream_topic = rospy.Publisher('camera_stream', CompressedImage, queue_size=10)
+        self.stream_topic = rospy.Publisher('camera_stream', CompressedImage, queue_size=10)
         self.subscriber = rospy.Subscriber('request_capture', Empty, self.subscribe)
 
         # run mjpg-streamer background
         rospy.loginfo('starting mjpg-streamer...')
         subprocess.call(['mkdir', '-p', '/tmp/ros/camera'])
-        subprocess.Popen(['mjpg_streamer', '-i', '"/usr/lib/input_uvc.so -d /dev/video0 -r 1280x720 -f 15"', '-o', '"/usr/lib/output_file.so -f /tmp/ros/camera -s 10"'])
+        subprocess.Popen(['mjpg_streamer', '-i', '"/usr/lib/input_uvc.so -d /dev/video0 -r 1280x720 -f 15"', '-o',
+                          '"/usr/lib/output_file.so -f /tmp/ros/camera -s 10"'])
         rospy.loginfo('done.')
 
         self.sleep_rate = rospy.Rate(self.SLEEP_RATE_HZ)
@@ -52,7 +55,7 @@ class Node(object):
         f.close()
         response.header = header
         rospy.loginfo('PUBLISH JPG IMAGE')
-        stream_topic.publish(response)
+        self.stream_topic.publish(response)
 
     def start(self):
         try:
@@ -63,6 +66,7 @@ class Node(object):
             subprocess.call(['killall', 'mjpg_streamer'])
             subprocess.call(['rm', '-r', '/tmp/ros/camera'])
             rospy.loginfo('done.')
+
 
 if __name__ == '__main__':
     Node().start()
