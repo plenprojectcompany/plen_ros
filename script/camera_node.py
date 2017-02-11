@@ -9,10 +9,10 @@ from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Empty
 
 def get_latest_modified_file_path(dirname):
-  target = os.path.join(dirname, '*')
-  files = [(f, os.path.getmtime(f)) for f in glob(target)]
-  latest_modified_file_path = sorted(files, key=lambda files: files[1])[-1]
-  return latest_modified_file_path[0]
+    target = os.path.join(dirname, '*')
+    files = [(f, os.path.getmtime(f)) for f in glob(target)]
+    latest_modified_file_path = sorted(files, key=lambda files: files[1])[-1]
+    return latest_modified_file_path[0]
 
 class Node(object):
     SLEEP_RATE_HZ = 50
@@ -40,8 +40,8 @@ class Node(object):
         file_path = get_latest_modified_file_path("/tmp/ros/camera")
 
         header = Header()
-        header.seq = sequence
-        sequence = sequence + 1
+        header.seq = self.sequence
+        self.sequence = self.sequence + 1
         header.stamp = os.path.getmtime(file_path)
         header.frame_id = "0"
 
