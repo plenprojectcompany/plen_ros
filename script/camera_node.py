@@ -44,7 +44,7 @@ class Node(object):
 
         header = Header()
         header.seq = self.sequence
-        self.sequence = self.sequence + 1
+        self.sequence += 1
         header.stamp = os.path.getmtime(file_path)
         header.frame_id = "0"
 
