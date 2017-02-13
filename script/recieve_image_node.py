@@ -23,7 +23,7 @@ class Node(object):
 
     def subscribe(self, message):
         rospy.loginfo('RECEIVED IMAGE')
-        f = open('received_image.jpg', 'w')
+        f = open('/tmp/ros/camera/received_image.jpg', 'w')
         f.write(message.data)
         f.close()
 
@@ -33,7 +33,7 @@ class Node(object):
                 self.stream_topic.publish(Empty())
                 self.sleep_rate.sleep()
         finally:
-            subprocess.call(['rm', 'receive_image.jpg'])
+            subprocess.call(['rm', '/tmp/ros/camera/receive_image.jpg'])
 
 
 if __name__ == '__main__':

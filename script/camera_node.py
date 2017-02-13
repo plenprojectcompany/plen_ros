@@ -5,8 +5,9 @@ from glob import glob
 import subprocess
 
 import rospy
-from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Empty
+from std_msgs.msg import Header
+from sensor_msgs.msg import CompressedImage
 
 
 def get_latest_modified_file_path(dirname):
@@ -27,25 +28,25 @@ class Node(object):
 
         # register publisher wanted to publish message of web camera
         self.stream_topic = rospy.Publisher('camera_stream', CompressedImage, queue_size=10)
-        self.subscriber = rospy.Subscriber('request_capture', Empty, self.subscribe)
+        rospy.Subscriber('request_capture', Empty, self.subscribe)
 
         # run mjpg-streamer background
         rospy.loginfo('starting mjpg-streamer...')
         subprocess.call(['mkdir', '-p', '/tmp/ros/camera'])
-        subprocess.Popen(['mjpg_streamer', '-i', '"/usr/lib/input_uvc.so -d /dev/video0 -r 1280x720 -f 15"', '-o',
-                          '"/usr/lib/output_file.so -f /tmp/ros/camera -s 10"'])
+        subprocess.Popen(['mjpg_streamer', '-i', '/usr/lib/input_uvc.so -d /dev/video0 -r 1280x720 -f 15', '-o',
+                          '/usr/lib/output_file.so -f /tmp/ros/camera -s 10'])
         rospy.loginfo('done.')
 
         self.sleep_rate = rospy.Rate(self.SLEEP_RATE_HZ)
 
     def subscribe(self, message):
         rospy.loginfo('SUBSCRIBED REQUEST')
-        file_path = get_latest_modified_file_path("/tmp/ros/camera")
+        file_path = get_latest_modified_file_path("/tmp/ros/camera/")
 
         header = Header()
         header.seq = self.sequence
         self.sequence += 1
-        header.stamp = os.path.getmtime(file_path)
+        header.stamp.secs = int(os.path.getmtime(file_path))
         header.frame_id = "0"
 
         response = CompressedImage()
