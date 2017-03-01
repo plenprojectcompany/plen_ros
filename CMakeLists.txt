@@ -18,11 +18,11 @@ include_directories(
 )
 
 install(PROGRAMS
-   script/six_axis_node.py
-   script/ble_node.py
-   script/eyes_node.py
-   script/serial_node.py
-   script/camera_node.py
+   scripts/six_axis_node.py
+   scripts/ble_node.py
+   scripts/eyes_node.py
+   scripts/serial_node.py
+   scripts/camera_node.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
