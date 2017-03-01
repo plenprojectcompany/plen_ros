@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+# coding=utf-8
+
+__author__    = 'Mitsuhiro YABU'
+__author__    = 'Tatsuroh SAKAGUCHI'
+__author__    = 'Yugo KAJIWARA'
+__copyright__ = 'PLEN Project Company, and all authors.'
+__license__   = 'GPLv2'
 
 import subprocess
 
