@@ -19,7 +19,7 @@ rospy.init_node('ble_node', anonymous=True)
 
 # register publisher wanted to publish message of BLE
 eyes_topic = rospy.Publisher('instruction_to_eyes', Eyes, queue_size=10)
-rs485 = rospy.Publisher('to_rs485', String, queue_size=10)
+to_rs485 = rospy.Publisher('to_rs485', String, queue_size=10)
 
 mainloop = None
 
