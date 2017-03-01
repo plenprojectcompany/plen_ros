@@ -18,7 +18,7 @@ def get_latest_modified_file_path(dirname):
 
 
 class Node(object):
-    SLEEP_RATE_HZ = 50
+    SLEEP_RATE_HZ = 15
 
     def __init__(self):
         self.sequence = 0

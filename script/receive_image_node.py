@@ -8,7 +8,7 @@ from std_msgs.msg import Empty
 
 
 class Node(object):
-    SLEEP_RATE_HZ = 50
+    SLEEP_RATE_HZ = 15
 
     def __init__(self):
 
