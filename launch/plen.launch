@@ -1,7 +1,7 @@
 <launch>
-	<node pkg="plen" name="eyes_node" type="eyes_node.py"/>
-	<node pkg="plen" name="serial_node" type="serial_node.py"/>
-	<node pkg="plen" name="six_axis_node" type="six_axis_node.py"/>
-	<node pkg="plen" name="ble_node" type="ble_node.py"/>
-	<!-- <node pkg="plen" name="camera_node" type="camera_node.py"/> -->
+	<node pkg="plen_ros" name="eyes_node" type="eyes_node.py"/>
+	<node pkg="plen_ros" name="serial_node" type="serial_node.py"/>
+	<node pkg="plen_ros" name="six_axis_node" type="six_axis_node.py"/>
+	<node pkg="plen_ros" name="ble_node" type="ble_node.py"/>
+	<!-- <node pkg="plen_ros" name="camera_node" type="camera_node.py"/> -->
 </launch>

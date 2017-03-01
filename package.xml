@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>plen</name>
+  <name>plen_ros</name>
   <version>2.0.0</version>
   <description>The PLEN ROS package for PLEN Developer Edition series</description>
 

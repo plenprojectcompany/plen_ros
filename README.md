@@ -1,4 +1,4 @@
-plen-Firmware_ROS
+plen_ros (PLEN Firmware for ROS) | PLEN Project Company Inc.
 ================================================================================
 ##Copyright (c) 2016,
 - [Mitsuhiro YABU](https://github.com/MitsuhiroYabu)
