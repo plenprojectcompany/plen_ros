@@ -28,7 +28,7 @@ class PlenSerial(serial.Serial):
         self.re_de.write(1)
         try:
             self.write(text)
-            self.flushOutput()
+            self.flush()
         finally:
             self.re_de.write(0)
 
