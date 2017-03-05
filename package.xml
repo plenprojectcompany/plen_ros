@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>plen_ros</name>
+  <version>2.0.0</version>
+  <description>The PLEN ROS package for PLEN Developer Edition series</description>
+
+  <maintainer email="helpline@plen.jp">PLEN Project Company Inc.</maintainer>
+
+  <license>BSD</license>
+  <license>GPLv2</license>
+
+  <url type="website">http://plen.jp</url>
+  <url type="repository">https://github.com/plenprojectcompany/plen-Firmware_ROS</url>
+
+  <author email="mitsuhirooooo@gmail.com">Mitsuhiro YABU</author>
+  <author email="tacchan.mello.ioiq@gmail.com">Tatsuroh SAKAGUCHI</author>
+  <author email="y.kaji.oita@gmail.com">Yugo KAJIWARA</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>plen_msgs</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>plen_msgs</run_depend>
+  
+  <export>
+  </export>
+</package>
