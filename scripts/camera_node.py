@@ -46,7 +46,6 @@ class Node(object):
         self.sleep_rate = rospy.Rate(self.SLEEP_RATE_HZ)
 
     def subscribe(self, message):
-        rospy.loginfo('SUBSCRIBED REQUEST')
         file_path = get_latest_modified_file_path("/tmp/ros/camera/")
 
         header = Header()
