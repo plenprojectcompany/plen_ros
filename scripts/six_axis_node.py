@@ -81,7 +81,6 @@ class Node(object):
         self.publish()
 
     def publish(self):
-        rospy.loginfo('PUBLISH ACCEL')
         accelgyro = self.mpu.read_accelgyros()
 
         # Set acceleration data and gyro data (Normalize for PLEN Axis)
