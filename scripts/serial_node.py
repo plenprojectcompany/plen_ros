@@ -24,6 +24,9 @@ class PlenSerial(serial.Serial):
             port=port, baudrate=baudrate, **kwargs)
         self.re_de = mraa.Gpio(re_de_pin)
 
+        self.flushOutput()
+        self.flushInput()
+
     def write_with_re_de(self, text):
         self.re_de.write(1)
         try:
