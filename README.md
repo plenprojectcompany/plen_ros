@@ -1,12 +1,12 @@
 plen_ros (PLEN Firmware for ROS) | PLEN Project Company Inc.
 ================================================================================
-##Copyright (c) 2016,
+## Copyright (c) 2016,
 - [Mitsuhiro YABU](https://github.com/MitsuhiroYabu)
 - [Tatsuroh SAKAGUCHI](https://github.com/Tacha-S)
 - [Yugo KAJIWARA](https://github.com/musubi05)
 - [PLEN Project Company Inc.](https://plen.jp)
 
-##Build Environment
+## Build Environment
 - Intel Edison
 - ROS indigo
 - Bluez 5.35
@@ -17,6 +17,6 @@ plen_ros (PLEN Firmware for ROS) | PLEN Project Company Inc.
 - python-gobject
 - mjpg-streamer
 
-##License
+## License
 - These scripts are released under the BSD License.
 - "ble_node.py" is released under GNU General Public License (GPLv2).
