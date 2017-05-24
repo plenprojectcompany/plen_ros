@@ -10,11 +10,12 @@ plen_ros (PLEN Firmware for ROS) | PLEN Project Company Inc.
 - Intel Edison
 - ROS indigo
 - Bluez 5.35
-- Python 2.7.9
-- mraa
-- pySerial
-- python-dbus
-- python-gobject
+- Python 2.7.3
+- mraa 0.7.2
+- upm 0.3.1
+- pySerial 2.7
+- python-dbus 1.2.0
+- python-gobject 2.28.3
 - mjpg-streamer
 
 ## License
